@@ -26,61 +26,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/hello_world")
-def hello_world():
-    """This function is purely for testing if the connection worked."""
-    
-    playground = Connection(host=HOST_IP,
-                        gateway=Connection(GATEWAY_IP),
-                        connect_kwargs={
-                          "key_filename": [SSH_KEY]
-                        })
-    
-    result = playground.run("python3 test.py")
-    
-    playground.close()
-    
-    return {
-      "message": result.stdout,
-      "status_code": 200
-    }
-
-@app.get("/learn_coding")
-def learn_coding():
-    """LLM Inferencing Test. Passing in quieres is not supported."""
-    
-    playground = Connection(host=HOST_IP,
-                        gateway=Connection(GATEWAY_IP),
-                        connect_kwargs={
-                          "key_filename": [SSH_KEY]
-                        })
-    
-    result = playground.run("cd ~/intro-to-hf && python3 inference.py")
-    split = result.stdout.split("Result: ")
-    
-    playground.close()
-    
-    return {
-      "message": split[1],
-      "status_code": 200
-    }
-
-@app.get("/gojo")
-def gojo():
-    """Transfering an image from remote to the server."""
-    
-    playground = Connection(host=HOST_IP,
-                        gateway=Connection(GATEWAY_IP),
-                        connect_kwargs={
-                          "key_filename": [SSH_KEY]
-                        })
-    
-    playground.get("/home/ubuntu/images.jpeg")
-
-    playground.close()
-
-    return FileResponse("images.jpeg", media_type="image/jpeg")
-
 class UserPrompt(BaseModel):
     prompt: str
 
