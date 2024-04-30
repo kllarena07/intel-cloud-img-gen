@@ -3,6 +3,7 @@ from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fabric import Connection
 from dotenv import dotenv_values
+from pydantic import BaseModel
 
 config = dotenv_values(".env")
 
@@ -56,3 +57,13 @@ def gojo():
     playground.get("/home/ubuntu/images.jpeg")
 
     return FileResponse("images.jpeg", media_type="image/jpeg")
+
+class UserPrompt(BaseModel):
+    prompt: str
+
+@app.post("/generate/")
+def generate_image(args: UserPrompt):
+    playground.run(f"python3 inference.py --prompt '{args.prompt}'")
+    playground.get("/home/ubuntu/inference.jpeg")
+
+    return FileResponse("inference.jpeg", media_type="image/jpeg")
